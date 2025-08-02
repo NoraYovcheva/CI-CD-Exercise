@@ -1,0 +1,37 @@
+name: CI for Student Registry App
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-app:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: 📦 Install dependencies
+      run: npm install
+
+    - name: 🚀 Start application in background
+      run: npm start &
+
+    - name: ⏳ Wait for server to start
+      run: sleep 2
+
+    - name: 🧪 Run tests
+      run: npm test
